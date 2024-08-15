@@ -482,5 +482,3 @@ $RECYCLE.BIN/
 
 # Vim temporary swap files
 *.swp
-API/obj/Debug/net8.0/refint/API.dll
-API/obj/Debug/net8.0/ref/API.dll
