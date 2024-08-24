@@ -28,7 +28,8 @@ public class AccountController : BaseApiController
             return BadRequest("Username is already taken!");
         }
 
-        using var hmac = new HMACSHA512();
+        return Ok();
+        /* using var hmac = new HMACSHA512();
 
         var user = new AppUser
         {
@@ -44,7 +45,7 @@ public class AccountController : BaseApiController
         {
             Username = user.UserName,
             Token = tokenService.CreateToken(user)
-        };
+        }; */
     }
 
     [HttpPost("login")]
