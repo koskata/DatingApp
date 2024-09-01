@@ -15,7 +15,7 @@ import { MembersService } from '../../_services/members.service';
   styleUrl: './photo-editor.component.css'
 })
 export class PhotoEditorComponent implements OnInit {
-  
+
   private accountService = inject(AccountService);
   private memberService = inject(MembersService);
   member = input.required<Member>();
@@ -29,14 +29,14 @@ export class PhotoEditorComponent implements OnInit {
     this.initializeUploader();
   }
 
-  fileOverBase(e : any){
+  fileOverBase(e: any) {
     this.hasBaseDropZoneOver = e;
   }
 
   deletePhoto(photo: Photo) {
     this.memberService.deletePhoto(photo).subscribe({
       next: _ => {
-        const updatedMember = {...this.member()};
+        const updatedMember = { ...this.member() };
         updatedMember.photos = updatedMember.photos.filter(x => x.id !== photo.id);
         this.memberChange.emit(updatedMember);
       }
@@ -52,12 +52,12 @@ export class PhotoEditorComponent implements OnInit {
           this.accountService.setCurrentUser(user)
         }
 
-        const updatedMember = {...this.member()}
+        const updatedMember = { ...this.member() }
         updatedMember.photoUrl = photo.url;
         updatedMember.photos.forEach(p => {
           if (p.isMain) {
             p.isMain = false;
-            
+
           }
           if (p.id === photo.id) {
             p.isMain = true;
@@ -87,9 +87,28 @@ export class PhotoEditorComponent implements OnInit {
 
     this.uploader.onSuccessItem = (item, response, status, headers) => {
       const photo = JSON.parse(response);
-      const updatedMember = {...this.member()}
+      const updatedMember = { ...this.member() }
       updatedMember.photos.push(photo);
       this.memberChange.emit(updatedMember);
+      if (photo.isMain) {
+        const user = this.accountService.currentUser();
+        if (user) {
+          user.photoUrl = photo.url;
+          this.accountService.setCurrentUser(user);
+        }
+        updatedMember.photoUrl = photo.url;
+        updatedMember.photos.forEach(p => {
+          if (p.isMain) {
+            p.isMain = false;
+
+          }
+          if (p.id === photo.id) {
+            p.isMain = true;
+          }
+
+          this.memberChange.emit(updatedMember);
+        })
+      }
     }
   }
 
